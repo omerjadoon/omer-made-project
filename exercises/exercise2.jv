@@ -1,0 +1,70 @@
+// Keep only valid data we are interested in
+// Define types of values and constraints for them
+// We are only interested in Furth, valid stadtteil start with "Furth-"
+// "id" contains geopoints with the following pattern:
+// {geo-coordinate 1}, {geo-coordinate 2}
+// a geo-coordinate is defined as {1-3 numbers}.{numbers}
+// Drop "baumart_deutsch" column
+// Drop all rows with invalid values
+// Assign fitting built-in SQLite types (e.g., BIGINT, TEXT or FLOAT) to all columns
+// Write data into a SQLite database called “trees.sqlite”, in the table “trees”
+
+
+// Author : Omer Khan Jadoon
+
+
+pipeline TreesPipeline {
+
+    
+    
+    TreeHttpExtractor
+        -> TreeTextFileInterpreter
+        -> TreeCSVInterpreter
+        -> TreeTableInterpreter
+        -> TreeLoader;
+
+
+    valuetype TreeId oftype text {
+    constraints: [ TreeIdGeoPointsFormat ];
+    }
+
+    constraint TreeIdGeoPointsFormat oftype RegexConstraint {
+        regex: /^\d{1,3}\.\d+, \d{1,3}\.\d+$/;
+}
+
+    block TreeHttpExtractor oftype HttpExtractor {
+    // key: value
+    url: "https://opendata.rhein-kreis-neuss.de/api/v2/catalog/datasets/stadt-neuss-herbstpflanzung-2023/exports/csv";
+    } 
+
+    block TreeTextFileInterpreter oftype TextFileInterpreter { }
+
+    // 10. Next, we interpret the text file as sheet.
+    // A sheet only contains text cells and is useful for manipulating the shape of data before assigning more strict value types to cells.
+    block TreeCSVInterpreter oftype CSVInterpreter {
+        delimiter: ';';
+    }
+
+// lfd_nr;stadtteil;standort;baumart_botanisch;baumart_deutsch;id;baumfamilie
+    block TreeTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "lfd_nr" oftype integer,
+            "stadtteil" oftype text,
+            "standort" oftype text,
+            "baumart_botanisch" oftype text,
+            "baumart_deutsch" oftype text,
+            "id" oftype TreeId,
+            "baumfamilie" oftype text
+            
+        ];
+    }
+
+// Load data to sqlite
+    block TreeLoader oftype SQLiteLoader {
+        table: "Trees";
+        file: "./Trees.sqlite";
+    }
+
+}
+
