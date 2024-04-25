@@ -1,0 +1,64 @@
+// Build an automated data pipeline for the following source:
+// https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-flughafen-weltweit/exports/csv?lang=en&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B
+// Goal
+// Write data into a SQLite database called “airports.sqlite”, in the table “airports”
+// Assign fitting built-in SQLite types (e.g., BIGINT, TEXT or FLOAT) to all columns
+// Do not rename column names
+// No further data validation is required, do not drop any rows or change any data points
+
+// Author : Omer Khan Jadoon
+
+
+pipeline AirportsPipeline {
+
+    
+    
+    AirportHttpExtractor
+        -> AirportTextFileInterpreter
+        -> AirportCSVInterpreter
+        -> AirportTableInterpreter
+        -> AirportLoader;
+
+
+    block AirportHttpExtractor oftype HttpExtractor {
+    // key: value
+    url: "https://opendata.rhein-kreis-neuss.de/api/explore/v2.1/catalog/datasets/rhein-kreis-neuss-flughafen-weltweit/exports/csv?lang=en&timezone=Europe%2FBerlin&use_labels=true&delimiter=%3B";
+    } 
+
+    block AirportTextFileInterpreter oftype TextFileInterpreter { }
+
+    // 10. Next, we interpret the text file as sheet.
+    // A sheet only contains text cells and is useful for manipulating the shape of data before assigning more strict value types to cells.
+    block AirportCSVInterpreter oftype CSVInterpreter {
+        delimiter: ';';
+    }
+
+// Lfd. Nummer;Name des Flughafens;Ort;Land;IATA;ICAO;Latitude;Longitude;Altitude;Zeitzone;DST;Zeitzonen-Datenbank;geo_punkt
+//8703;Barberton Airport;Barberton;South Africa;0;FABR;-25.716869;30.97518;686;2.0;U;Africa/Johannesburg;-25.716869, 30.97518
+
+    block AirportTableInterpreter oftype TableInterpreter {
+        header: true;
+        columns: [
+            "Lfd. Nummer" oftype integer,
+            "Name des Flughafens" oftype text,
+            "Ort" oftype text,
+            "Land" oftype text,
+            "IATA" oftype text,
+            "ICAO" oftype text,
+            "Latitude" oftype decimal,
+            "Longitude" oftype decimal,
+            "Altitude" oftype integer,
+            "Zeitzone" oftype decimal,
+            "DST" oftype text,
+            "Zeitzonen-Datenbank" oftype text,
+            "geo_punkt" oftype text
+        ];
+    }
+
+    block AirportLoader oftype SQLiteLoader {
+        table: "airports";
+        file: "./airports.sqlite";
+    }
+
+}
+
