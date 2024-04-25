@@ -20,17 +20,29 @@ pipeline TreesPipeline {
     TreeHttpExtractor
         -> TreeTextFileInterpreter
         -> TreeCSVInterpreter
+        -> BaumartDeutschColumnDeleter
         -> TreeTableInterpreter
         -> TreeLoader;
 
 
     valuetype TreeId oftype text {
-    constraints: [ TreeIdGeoPointsFormat ];
+        constraints: [ TreeIdGeoPointsFormat ];
     }
 
     constraint TreeIdGeoPointsFormat oftype RegexConstraint {
         regex: /^\d{1,3}\.\d+, \d{1,3}\.\d+$/;
-}
+    }
+
+    valuetype Stadtteil oftype text {
+        constraints: [ StadtteilFormat ];
+    }
+
+    constraint StadtteilFormat oftype RegexConstraint {
+        regex: /^Furth-.*/;
+    }
+
+
+
 
     block TreeHttpExtractor oftype HttpExtractor {
     // key: value
@@ -45,15 +57,19 @@ pipeline TreesPipeline {
         delimiter: ';';
     }
 
+
+     block BaumartDeutschColumnDeleter oftype ColumnDeleter {
+        delete: [column E];
+    }
+
 // lfd_nr;stadtteil;standort;baumart_botanisch;baumart_deutsch;id;baumfamilie
     block TreeTableInterpreter oftype TableInterpreter {
         header: true;
         columns: [
             "lfd_nr" oftype integer,
-            "stadtteil" oftype text,
+            "stadtteil" oftype Stadtteil,
             "standort" oftype text,
             "baumart_botanisch" oftype text,
-            "baumart_deutsch" oftype text,
             "id" oftype TreeId,
             "baumfamilie" oftype text
             
