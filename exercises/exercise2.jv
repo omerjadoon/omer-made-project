@@ -62,8 +62,8 @@ pipeline TreesPipeline {
 
 // Load data to sqlite
     block TreeLoader oftype SQLiteLoader {
-        table: "Trees";
-        file: "./Trees.sqlite";
+        table: "trees";
+        file: "./trees.sqlite";
     }
 
 }
