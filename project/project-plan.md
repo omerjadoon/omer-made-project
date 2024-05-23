@@ -2,19 +2,19 @@
 
 ## Title
 <!-- Give your project a short title. -->
-Impact of Climate change on various species of  trees in Frankfurt
+Impact of Climate change on various species of trees in Frankfurt
 
 ## Main Question
 
 <!-- Think about one main question you want to answer based on the data. -->
-1. How average monthly temperature impacts the crown diameter of various species of trees?
-2. How it effects the different ages of plants ( we will calculate this on basis of plantation year)
+1. Coorelation of Planation year temperature with the crown diameter, trunk height etc of various species of trees?
+2. How it varies across different species of plants?
 
 ## Description
 
 <!-- Describe your data science project in max. 200 words. Consider writing about why and how you attempt it. -->
 
-XY is an important problem, because... This projects analyzes XY, using method A. The results can give insights into...
+Climate change impacts the growth of trees. So my aim is to find the impact of climate change especially increase in temprature on the growth of different plant species in Frankfurt
 
 ## Datasources
 
@@ -40,7 +40,8 @@ Dataset provide the following information: Type and genus of the tree, tree numb
 
 <!-- List of work packages ordered sequentially, each pointing to an issue with more details. -->
 
-1. Example Issue [#1][i1]
-2. ...
+1. Data Ingestion: Get all the relevant Data [#1][i1]
+2. Data PreProcessing 
+3. Generate Report
 
 [i1]: https://github.com/jvalue/made-template/issues/1
