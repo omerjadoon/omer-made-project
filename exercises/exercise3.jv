@@ -9,6 +9,7 @@ pipeline GoodsPipeline {
         -> FooterRemover
         -> ColumnDeleter
         -> HeaderWriter
+        -> QuantityHeaderWriter
         -> GoodsTableInterpreter
         -> GoodsLoader;
 
@@ -49,6 +50,7 @@ pipeline GoodsPipeline {
         delete: [row 41326, row 41327, row 41328, row 41329, row 41330];  // Skip the last 5 metadata rows
     }
 
+
     block ColumnDeleter oftype ColumnDeleter {
         delete: [
             column F, column G, column H, column I, column J, column K, column L, column M,
@@ -62,6 +64,11 @@ pipeline GoodsPipeline {
     block HeaderWriter oftype CellWriter {
         at: range A1:E1;
         write: ["year", "month", "goods_id", "goods_name", "goods_source"];
+    }
+
+    block QuantityHeaderWriter oftype CellWriter {
+        at: range AT1:AU1;
+        write: ["abroad", "total"];
     }
 
     block GoodsTableInterpreter oftype TableInterpreter {
@@ -83,6 +90,5 @@ pipeline GoodsPipeline {
     }
 
 }
-
 
 
