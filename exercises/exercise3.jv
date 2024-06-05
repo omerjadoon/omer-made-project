@@ -6,7 +6,7 @@ pipeline GoodsPipeline {
         -> GoodsTextFileInterpreter
         -> GoodsCSVInterpreter
         -> MetadataRemover
-        -> FooterRemover
+        // -> FooterRemover
         
         -> HeaderWriter
         -> QuantityHeaderWriter
@@ -49,9 +49,9 @@ pipeline GoodsPipeline {
         delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7, row 8, row 9];  // Skip the first 9 metadata rows
     }
 
-    block FooterRemover oftype RowDeleter {
-        delete: [row 41326, row 41327, row 41328, row 41329, row 41330];  // Skip the last 5 metadata rows
-    }
+    // block FooterRemover oftype RowDeleter {
+    //     delete: [row 41326, row 41327, row 41328, row 41329, row 41330];  // Skip the last 5 metadata rows
+    // }
 
 
     block ColumnDeleter oftype ColumnDeleter {
