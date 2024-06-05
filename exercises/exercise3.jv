@@ -7,9 +7,10 @@ pipeline GoodsPipeline {
         -> GoodsCSVInterpreter
         -> MetadataRemover
         -> FooterRemover
-        -> ColumnDeleter
+        
         -> HeaderWriter
         -> QuantityHeaderWriter
+        -> ColumnDeleter
         -> GoodsTableInterpreter
         -> GoodsLoader;
 
