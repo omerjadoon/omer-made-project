@@ -1,52 +1,63 @@
-composite blocktype TextFileExtractor {
-    property url oftype text;
+// Author: Omer Khan Jadoon
 
-    input inputName oftype None;
-    output outputName oftype File;
+pipeline GoodsPipeline {
 
-    block FileExtractor oftype HttpExtractor { url: url; }
+    GoodsHttpExtractor
+        -> GoodsTextFileInterpreter
+        -> GoodsCSVInterpreter
+        -> MetadataRemover
+        -> FooterRemover
+        -> ColumnDeleter
+        -> GoodsTableInterpreter
+        -> GoodsLoader;
 
-    block FileTextInterpreter oftype TextFileInterpreter {}
-
-    inputName
-        ->FileExtractor
-        ->FileTextInterpreter
-        ->outputName;
-}
-
-composite blocktype CSVExtractor {
-    property url oftype text;
-    property delimiter oftype text: ',';
-    property enclosing oftype text: '';
-    property enclosingEscape oftype text: '';
-
-    input inputName oftype None;
-    output outputName oftype Sheet;
-
-    block TextFileExtractor oftype TextFileExtractor { url: url; }
-
-    block FileCSVInterpreter oftype CSVInterpreter {
-        delimiter: delimiter;
-        enclosing: enclosing;
-        enclosingEscape: enclosingEscape;
+    valuetype GoodsId oftype text {
+        constraints: [ GoodsIdFormat ];
     }
 
-    inputName
-        ->TextFileExtractor
-        ->FileCSVInterpreter
-        ->outputName;
-}
+    constraint GoodsIdFormat oftype RegexConstraint {
+        regex: /^NST7-[0-9A-Z]{3}$/;
+    }
 
-composite blocktype GoodsTransportedTableInterpreter {
-    input inputName oftype Sheet;
-    output outputName oftype Table;
+    valuetype Month oftype text {
+        constraints: [ MonthFormat ];
+    }
+
+    constraint MonthFormat oftype AllowlistConstraint {
+        allowlist: [
+            "Januar", "Februar", "März", "April", "Mai", "Juni",
+            "Juli", "August", "September", "Oktober", "November", "Dezember"
+        ];
+    }
+
+    block GoodsHttpExtractor oftype HttpExtractor {
+        url: "https://www-genesis.destatis.de/genesis/downloads/00/tables/46131-0014_00.csv";
+    } 
+
+    block GoodsTextFileInterpreter oftype TextFileInterpreter { }
+
+    block GoodsCSVInterpreter oftype CSVInterpreter {
+        delimiter: ';';
+    }
+
+    block MetadataRemover oftype RowDeleter {
+        delete: [row 1, row 2, row 3, row 4, row 5, row 6, row 7, row 8, row 9];  // Skip the first 9 metadata rows
+    }
+
+    block FooterRemover oftype RowDeleter {
+        delete: [row 41326, row 41327, row 41328, row 41329, row 41330];  // Skip the last 5 metadata rows
+    }
+
+    block ColumnDeleter oftype ColumnDeleter {
+        delete: [column F, column G, column H, column I, column J, column K, column L, column M, column N, column O, column P, column Q, column R, column S, column T, column U, column V, column W, column X, column Y, column Z, column AA, column AB, column AC, column AD, column AE, column AF, column AG, column AH, column AI, column AJ, column AK, column AL, column AM, column AN, column AO, column AP, column AQ, column AR, column AS];  // Delete columns we don't need
+    }
 
     block GoodsTableInterpreter oftype TableInterpreter {
         header: true;
         columns: [
             "year" oftype integer,
-            "month" oftype text,
-            "goods_id" oftype text,
+            "month" oftype Month,
+            "goods_id" oftype GoodsId,
             "goods_name" oftype text,
             "goods_source" oftype text,
             "abroad" oftype integer,
@@ -54,34 +65,9 @@ composite blocktype GoodsTransportedTableInterpreter {
         ];
     }
 
-    inputName->GoodsTableInterpreter->outputName;
-}
-
-composite blocktype GoodsSink {
-    input inputName oftype Table;
-    output outputName oftype None;
-
     block GoodsLoader oftype SQLiteLoader {
         table: "goods";
         file: "./goodsTransportedByTrain.sqlite";
     }
 
-    inputName->GoodsLoader->outputName;
-}
-
-pipeline GoodsPipeline {
-    GoodsCSVExtractor 
-        -> GoodsTableProcessor
-        -> GoodsLoader;
-
-    block GoodsCSVExtractor oftype CSVExtractor {
-        url: "https://www-genesis.destatis.de/genesis/downloads/00/tables/46131-0014_00.csv";
-        enclosing: '"';
-    }
-
-    block GoodsTableProcessor oftype GoodsTransportedTableInterpreter {
-    }
-
-    block GoodsLoader oftype GoodsSink {
-    }
 }
