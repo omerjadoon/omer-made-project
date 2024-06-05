@@ -38,7 +38,7 @@ pipeline GoodsPipeline {
     } 
 
      block GoodsTextFileInterpreter oftype TextFileInterpreter {
-        encoding: "utf8";   // Ensure correct encoding for German umlauts
+        encoding: "latin2";   // Ensure correct encoding for German umlauts
     }
 
     block GoodsCSVInterpreter oftype CSVInterpreter {
