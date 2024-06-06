@@ -1,97 +1,54 @@
-# %% [markdown]
-# # Impact of Climate change on various species of trees in Frankfurt
-# 
-
-# %% [markdown]
-# Coorelation of Planation year temperature with the crown diameter, trunk height etc of various species of trees?
-# How it varies across different species of plants?
-
-# %% [markdown]
-# ## Extraction from 2 CSV files
-
-# %%
-#import required dependencies here:
 import pandas as pd
-#from config import db_password
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.preprocessing import StandardScaler
+# Load the datasets
+economy_df = pd.read_csv('https://opendata.com.pk/dataset/4acccdea-baea-4bc7-8499-94835f352059/resource/5eed074c-c7ed-427a-816c-8482edb070a1/download/economy-and-growth_pak.csv')
+climate_df = pd.read_csv('https://opendata.com.pk/dataset/ececec4f-1835-4278-ae0c-5bd7c4ded652/resource/492b13f4-5b47-4437-a680-4e1b965c1ea2/download/climate-change-indicators-for-pakistan-1.csv')
 
-# %%
-#read csv 1
-df1 = pd.read_csv("https://offenedaten.frankfurt.de/dataset/73c5a6b3-c033-4dad-bb7d-8783427dd233/resource/257690bb-f40a-4e3a-93da-1310214f392f/download/baumauswahl.csv",sep = ';')
+# Clean the data by removing the first row (header information) and resetting the index
+economy_df = economy_df[1:].reset_index(drop=True)
+climate_df = climate_df[1:].reset_index(drop=True)
 
+# Convert the Year and Value columns to numeric
+economy_df['Year'] = pd.to_numeric(economy_df['Year'])
+economy_df['Value'] = pd.to_numeric(economy_df['Value'], errors='coerce')
 
-# %%
-url='https://github.com/omerjadoon/TemperatureData/raw/main/temperature.csv.zip'
-df2 = pd.read_csv(url)
+climate_df['Year'] = pd.to_numeric(climate_df['Year'])
+climate_df['Value'] = pd.to_numeric(climate_df['Value'], errors='coerce')
 
+# Pivot the data to have indicators as columns
+economy_pivot = economy_df.pivot_table(index='Year', columns='Indicator Name', values='Value')
+climate_pivot = climate_df.pivot_table(index='Year', columns='Indicator Name', values='Value')
 
-# %% [markdown]
-# # Transform
+# Merge the two datasets on the Year column
+merged_df = pd.merge(economy_pivot, climate_pivot, on='Year', how='inner')
 
-# %%
-frankfurt_df = df2[df2['City'] == 'Frankfurt']
+# Define the selected indicators
+selected_indicators = [
+    'Agricultural land (sq. km)',
+    'Urban population',
+    'CO2 emissions (kt)',
+    'Electric power consumption (kWh per capita)',
+    'Forest area (sq. km)',
+    'Cereal yield (kg per hectare)',
+    'Inflation, consumer prices (annual %)'
 
+]
 
-# %%
-#drop last 3 columns
-frankfurt_df.drop(frankfurt_df.columns[[2,3,4,5,6]], axis=1, inplace=True)
+# Filter the merged DataFrame to include only the selected indicators
+merged_df = merged_df[selected_indicators]
+# Filter the data to include only the years between 1970 and 2014
+merged_df = merged_df[(merged_df.index >= 1970) & (merged_df.index <= 2014)]
+scaler = StandardScaler()
+scaled_df = pd.DataFrame(scaler.fit_transform(merged_df.dropna()), columns=merged_df.columns, index=merged_df.dropna().index)
 
-
-# %%
-age_nan_count = frankfurt_df['AverageTemperature'].isna().sum()
-
-print(f"Number of NaN values in 'Age' column: {age_nan_count}")
-
-# %%
-df2_cleaned = frankfurt_df.dropna(subset=['AverageTemperature'])
-
-
-# %%
-df2_cleaned['dt'] = pd.to_datetime(df2_cleaned['dt'])
-
-# Step 3: Extract the year from the 'dt' column
-df2_cleaned['Year'] = df2_cleaned['dt'].dt.year
-
-# Step 4: Group by the year and calculate the average temperature per year
-annual_avg_temp_df = df2_cleaned.groupby('Year')['AverageTemperature'].mean().reset_index()
-
-# Display the result
-print(annual_avg_temp_df)
-
-# %%
-extended_df = pd.merge(df1, annual_avg_temp_df, left_on='PFLANZJAHR', right_on='Year', how='left')
-
-# Drop the 'dt' column as it's no longer needed
-extended_df = extended_df.drop(columns=['Year'])
-
-
-# %%
-extended_df = extended_df.rename(columns={
-    "OBJECTID": "ObjectID",
-    "BAUMNUMMER": "TreeNumber",
-    "HOCHWERT": "Latitude",
-    "RECHTSWERT": "Longitude",
-    "GATTUNG": "Genus",
-    "GA_LANG": "ScientificName",
-    "KR_DURCHM": "CrownDiameter",
-    "ST_UMFANG": "TrunkCircumference",
-    "STRASSE": "Street",
-    "BAUMHOEHE": "TreeHeight",
-    "ST_DURCHM": "TrunkDiameter",
-    "PFLANZJAHR": "PlantingYear",
-})
-
-
-# %%
-extended_df.drop(columns=["ObjectID", "TreeNumber", "Latitude", "Longitude", "ScientificName", "Street"], axis=1, inplace=True)
-
-# %%
-extended_df.dropna()
 
 # %% [markdown]
 # # Load
 
 # %%
-extended_df.to_csv('../data/data.csv')
+scaled_df.to_csv('../data/data.csv')
 
 # %%
 
