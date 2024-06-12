@@ -14,16 +14,7 @@ pipeline TemperaturePipeline {
         -> BatteryTemperatureTableTransformer 
         -> TemperatureLoader;
 
-    valuetype Month oftype text {
-        constraints: [ MonthFormat ];
-    }
 
-    constraint MonthFormat oftype AllowlistConstraint {
-        allowlist: [
-            "Januar", "Februar", "März", "April", "Mai", "Juni",
-            "Juli", "August", "September", "Oktober", "November", "Dezember"
-        ];
-    }
 
 
 
@@ -74,22 +65,27 @@ pipeline TemperaturePipeline {
         use: CelsiusToFahrenheit;
     }
 
-
-
-
     block BatteryTemperatureTableTransformer oftype TableTransformer {
         inputColumns: ["battery_temperature"];
         outputColumn: "battery_temperature";
         use: CelsiusToFahrenheit;
     }
 
+  valuetype PositiveInteger oftype integer {
+        constraints: [PositvieNumber];
+    }
+    constraint PositvieNumber oftype RangeConstraint {
+        lowerBound: 0;
+        lowerBoundInclusive: false;
+    }
+
     block TemperatureTableInterpreter oftype TableInterpreter {
         header: true;
         columns: [
-            "id" oftype integer ,
+            "id" oftype PositiveInteger ,
             "producer" oftype text,
             "model" oftype text,
-            "month" oftype Month,
+            "month" oftype integer,
             "temperature" oftype decimal,
             "battery_temperature" oftype decimal
         ];
