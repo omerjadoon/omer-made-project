@@ -33,10 +33,11 @@ pipeline TemperaturePipeline {
 
     block TemperatureZipArchiveInterpreter oftype ArchiveInterpreter {
         archiveType: "zip";
+         
     }
 
     block TemperatureCSVFilePicker oftype FilePicker {
-        path: "./data.csv";
+        path: "/data.csv";
     }
 
     block TemperatureTextFileInterpreter oftype TextFileInterpreter {
