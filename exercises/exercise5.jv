@@ -1,0 +1,75 @@
+// Author: Omer Khan Jadoon
+
+pipeline GTFSStopsPipeline {
+
+  GTFSStopsFeedExtractor
+  ->GTFSArchiveInterpreter
+  ->StopsFilePicker
+  ->StopsTextFileInterpreter
+    -> StopsCSVInterpreter
+    -> StopsTableInterpreter
+    -> StopsLoader;
+
+  // Download the zip file and interpret it.
+  block GTFSStopsFeedExtractor oftype HttpExtractor {
+    url: "https://gtfs.rhoenenergie-bus.de/GTFS.zip";
+  }
+block GTFSArchiveInterpreter oftype ArchiveInterpreter {
+        archiveType: "zip";
+    }
+// Pick the stops.txt file from the extracted archive.
+  block StopsFilePicker oftype FilePicker {
+    path: "/stops.txt";
+  }
+  // Interpret the stops file contents.
+
+block StopsCSVInterpreter oftype CSVInterpreter{
+        delimiter: ",";
+        enclosing: '"';
+       
+    }
+
+block StopsTextFileInterpreter oftype TextFileInterpreter {
+    encoding: "utf8";
+  }
+
+ block StopsTableInterpreter oftype TableInterpreter {
+    header: true;
+    columns: [
+      "stop_id" oftype integer,
+      "stop_name" oftype text,
+      "stop_lat" oftype LatitudeLongitude,
+      "stop_lon" oftype LatitudeLongitude,
+      "zone_id" oftype ZoneID1645
+    ];
+  }
+
+  // Load the validated data into the SQLite database.
+  block StopsLoader oftype SQLiteLoader {
+    table: "stops";
+    file: "./gtfs.sqlite";
+  }
+
+  // Define custom value types for validation.
+  valuetype ZoneID1645 oftype integer {
+    constraints: [EqualTo1645];
+  }
+
+  constraint EqualTo1645 oftype RangeConstraint {
+    lowerBound: 1645;
+    upperBound: 1645;
+    lowerBoundInclusive: true;
+    upperBoundInclusive: true;
+  }
+
+  valuetype LatitudeLongitude oftype decimal {
+    constraints: [GeoCoordinates];
+  }
+
+  constraint GeoCoordinates oftype RangeConstraint {
+    lowerBound: -90.0;
+    upperBound: 90.0;
+    lowerBoundInclusive: true;
+    upperBoundInclusive: true;
+  }
+}
