@@ -2,7 +2,7 @@ import os
 import pandas as pd
 
 # Define the path to the output file
-output_file_path = '../data/data.csv'
+output_file_path = 'data/data.csv'
 
 # Check if the output file exists
 assert os.path.exists(output_file_path), "Output file does not exist."
