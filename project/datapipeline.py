@@ -48,7 +48,7 @@ scaled_df = pd.DataFrame(scaler.fit_transform(merged_df.dropna()), columns=merge
 # # Load
 
 # %%
-scaled_df.to_csv('../data/data.csv')
+scaled_df.to_csv('data/data.csv')
 
 # %%
 
