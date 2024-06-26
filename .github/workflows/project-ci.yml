@@ -23,5 +23,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install pandas matplotlib seaborn scikit-learn
 
+    - name: Give execute permissions for tests.sh
+      run: chmod +x ./project/tests.sh
+
     - name: Run tests
       run: ./project/tests.sh
