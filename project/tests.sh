@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Execute the data pipeline
-python datapipeline.py
+python project/datapipeline.py
 
 # Execute the test script
-python test_pipeline.py
+python project/test_pipeline.py
