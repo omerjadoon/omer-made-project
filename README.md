@@ -2,53 +2,77 @@
 
 ![](https://byob.yarr.is/omerjadoon/omer-made-project/score_ex1) ![](https://byob.yarr.is/omerjadoon/omer-made-project/score_ex2) ![](https://byob.yarr.is/omerjadoon/omer-made-project/score_ex3) ![](https://byob.yarr.is/omerjadoon/omer-made-project/score_ex4) ![](https://byob.yarr.is/omerjadoon/omer-made-project/score_ex5)
 
-# Student Name
+#### Author
 Omer Khan Jadoon
 
-# Methods of Advanced Data Engineering Template Project
 
-This template project provides some structure for your open data project in the MADE module at FAU.
-This repository contains (a) a data science project that is developed by the student over the course of the semester, and (b) the exercises that are submitted over the course of the semester.
-Before you begin, make sure you have [Python](https://www.python.org/) and [Jayvee](https://github.com/jvalue/jayvee) installed. We will work with [Jupyter notebooks](https://jupyter.org/). The easiest way to do so is to set up [VSCode](https://code.visualstudio.com/) with the [Jupyter extension](https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter).
+###### Project Title :
+# Correlation between Various Climate Change Indicators and Economic Indicators in Pakistan
 
-To get started, please follow these steps:
-1. Create your own fork of this repository. Feel free to rename the repository right after creation, before you let the teaching instructors know your repository URL. **Do not rename the repository during the semester**.
-2. Setup the exercise feedback by changing the exercise badge sources in the `README.md` file following the patter `![](https://byob.yarr.is/<github-user-name>/<github-repo>/score_ex<exercise-number>)`. 
-For example, if your user is _myuser_ and your repo is _myrepo_, then update the badge for _exercise 1_ to `![](https://byob.yarr.is/myrepo/myuser/score_ex1)`. Proceed with the remaining badges accordingly.
+### Introduction
+The objective of this analysis is to explore the correlation between various climate change indicators and economic indicators in Pakistan. This study aims to identify the environmental factors that significantly impact economic performance, highlighting areas for improvement to promote sustainable economic growth while addressing climate change challenges.
+
+### Used Data
+##### Data Sources
+1.	Economy and Growth Data
+o	Description: Provides various economic indicators for Pakistan, including GDP, trade, and income statistics.
+o	Metadata URL: Economic Growth Metadata
+o	Data URL: Economic Growth Data
+o	Data Type: CSV
+2.	Climate Change Indicators Data
+o	Description: Includes climate-related indicators such as agricultural land area, CO2 emissions, and urban population affected by elevation changes.
+o	Metadata URL: Climate Change Metadata
+o	Data URL: Climate Change Data
+o	Data Type: CSV
+##### Data Structure and Quality
+•	Economy and Growth Data: Structured in a tabular format with columns for Country Name, Country ISO3, Year, Indicator Name, Indicator Code, and Value. The data is generally high quality, though some entries may have missing or inconsistent data.
+•	Climate Change Indicators Data: Similar structure with columns for Country Name, Country ISO3, Year, Indicator Name, Indicator Code, and Value. This dataset also requires cleaning to address missing or inconsistent entries.
+##### Data Licenses
+Both datasets are available under the Creative Commons Attribution license, which allows for free use, sharing, and adaptation, provided appropriate credit is given to the source.
+
+### Analysis
+##### Data Pipeline
+•	Technology Used: Implemented using Python with libraries such as Pandas, Matplotlib, Seaborn, and NumPy. Jupyter Notebook was used for development and documentation.
+•	Transformation and Cleaning Steps:
+1.	Loading data into Pandas DataFrames.
+2.	Initial inspection of data structure.
+3.	Cleaning data by removing header rows, converting columns to numeric types, and handling missing or inconsistent data.
+4.	Filtering data to include only the years between 1970 and 2014.
+5.	Selecting key indicators: Agricultural land, Urban population, CO2 emissions, Electricity production, Forest area, and Cereal yield.
+6.	Dropping rows with missing values and scaling data using MinMaxScaler.
+##### Results and Interpretation
+###### Correlation Analysis
+The correlation matrix heatmap (Figure 1) highlights the relationships between various climate change indicators and economic indicators in Pakistan. Key observations include:
+1.	High Positive Correlations:
+o	Urban population and CO2 emissions (0.98): As the urban population increases, CO2 emissions also tend to increase, indicating urbanization's impact on carbon emissions.
+o	CO2 emissions and Electric power consumption (0.95): Increased electric power consumption is associated with higher CO2 emissions, reflecting the energy sector's contribution to carbon emissions.
+o	Urban population and Electric power consumption (0.91): Urban population growth drives higher electricity demand, which aligns with increased CO2 emissions.
+o	Cereal yield and CO2 emissions (0.97): Higher agricultural productivity (cereal yield) correlates with increased CO2 emissions, possibly due to intensified agricultural activities.
+2.	High Negative Correlations:
+o	Agricultural land and Inflation (-0.77): Larger agricultural land areas are associated with lower inflation rates, suggesting that extensive agriculture might help stabilize food prices.
+o	Forest area and Urban population (-1.0): Urban expansion typically leads to deforestation, as indicated by the perfect negative correlation.
+o	Forest area and CO2 emissions (-0.99): Increased forest area correlates with lower CO2 emissions, underscoring the importance of forests in carbon sequestration.
+3.	Moderate Correlations:
+o	Agricultural land and Urban population (0.057): There is a very weak positive correlation, indicating minimal direct relationship.
+o	Inflation and CO2 emissions (0.15): Slight positive correlation suggests that higher CO2 emissions could be associated with increased inflation, though this relationship is weak.
 
 
-## Project Work
-Your data engineering project will run alongside lectures during the semester. We will ask you to regularly submit project work as milestones so you can reasonably pace your work. All project work submissions **must** be placed in the `project` folder.
+![Correlation Matrix between various climate and economic factors](images/correlation.png)
+Figure # 1 : Correlation Matrix between various climate and economic factors
+###### Pairplot Analysis
+The pairplot (Figure 2) provides a visual representation of the relationships between pairs of indicators. Notable patterns include:
+•	Positive Linear Relationships: Confirmed between urban population, CO2 emissions, and electric power consumption, as well as cereal yield and CO2 emissions.
+•	Negative Linear Relationships: Evident between forest area and urban population, CO2 emissions, and electric power consumption.
+•	Distribution Insights: Histogram plots on the diagonal reveal the distribution of individual indicators, highlighting their variance and skewness.
 
-### Exporting a Jupyter Notebook
-Jupyter Notebooks can be exported using `nbconvert` (`pip install nbconvert`). For example, to export the example notebook to html: `jupyter nbconvert --to html examples/final-report-example.ipynb --embed-images --output final-report.html`
-
-
-## Exercises
-During the semester you will need to complete exercises using [Jayvee](https://github.com/jvalue/jayvee). You **must** place your submission in the `exercises` folder in your repository and name them according to their number from one to five: `exercise<number from 1-5>.jv`.
-
-In regular intervalls, exercises will be given as homework to complete during the semester. Details and deadlines will be discussed in the lecture, also see the [course schedule](https://made.uni1.de/). At the end of the semester, you will therefore have the following files in your repository:
-
-1. `./exercises/exercise1.jv`
-2. `./exercises/exercise2.jv`
-3. `./exercises/exercise3.jv`
-4. `./exercises/exercise4.jv`
-5. `./exercises/exercise5.jv`
-
-### Exercise Feedback
-We provide automated exercise feedback using a GitHub action (that is defined in `.github/workflows/exercise-feedback.yml`). 
-
-To view your exercise feedback, navigate to Actions -> Exercise Feedback in your repository.
-
-The exercise feedback is executed whenever you make a change in files in the `exercise` folder and push your local changes to the repository on GitHub. To see the feedback, open the latest GitHub Action run, open the `exercise-feedback` job and `Exercise Feedback` step. You should see command line output that contains output like this:
-
-```sh
-Found exercises/exercise1.jv, executing model...
-Found output file airports.sqlite, grading...
-Grading Exercise 1
-	Overall points 17 of 17
-	---
-	By category:
-		Shape: 4 of 4
-		Types: 13 of 13
-```
+![ Pairplot for highly correlated Indicators](images/pairplot.png)
+Figure # 2 : Pairplot for highly correlated Indicators
+###### Causality Analysis
+Granger causality tests were conducted to investigate potential causal relationships between selected pairs of indicators:
+•	Urban Population and CO2 Emissions: Urban population growth Granger-causes CO2 emissions, suggesting that urbanization is a significant driver of increased carbon emissions.
+•	CO2 Emissions and Electric Power Consumption: CO2 emissions Granger-cause electric power consumption, indicating feedback loops where higher emissions could lead to policy changes affecting power consumption patterns.
+•	Agricultural Land and Inflation: Agricultural land area Granger-causes inflation, supporting the observation that extensive agriculture can help control food prices and inflation.
+### Conclusion
+The analysis revealed significant correlations between certain climate change indicators and economic performance in Pakistan. Key findings include:
+•	Correlated Indicators: Identified through a heatmap and pairplot visualizations.
+•	Predictive Power: Certain climate indicators demonstrated predictive power over economic indicators, as indicated by Granger causality tests.
