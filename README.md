@@ -31,7 +31,7 @@ o	Data Type: CSV
 Both datasets are available under the Creative Commons Attribution license, which allows for free use, sharing, and adaptation, provided appropriate credit is given to the source.
 
 ### Analysis
-##### Data Pipeline
+#### Data Pipeline
 •	Technology Used: Implemented using Python with libraries such as Pandas, Matplotlib, Seaborn, and NumPy. Jupyter Notebook was used for development and documentation.
 •	Transformation and Cleaning Steps:
 1.	Loading data into Pandas DataFrames.
@@ -40,8 +40,8 @@ Both datasets are available under the Creative Commons Attribution license, whic
 4.	Filtering data to include only the years between 1970 and 2014.
 5.	Selecting key indicators: Agricultural land, Urban population, CO2 emissions, Electricity production, Forest area, and Cereal yield.
 6.	Dropping rows with missing values and scaling data using MinMaxScaler.
-##### Results and Interpretation
-###### Correlation Analysis
+#### Results and Interpretation
+##### Correlation Analysis
 The correlation matrix heatmap (Figure 1) highlights the relationships between various climate change indicators and economic indicators in Pakistan. Key observations include:
 1.	High Positive Correlations:
 o	Urban population and CO2 emissions (0.98): As the urban population increases, CO2 emissions also tend to increase, indicating urbanization's impact on carbon emissions.
@@ -58,16 +58,16 @@ o	Inflation and CO2 emissions (0.15): Slight positive correlation suggests that 
 
 
 ![Correlation Matrix between various climate and economic factors](images/correlation.png)
-Figure # 1 : Correlation Matrix between various climate and economic factors
-###### Pairplot Analysis
+###### Figure # 1 : Correlation Matrix between various climate and economic factors
+##### Pairplot Analysis
 The pairplot (Figure 2) provides a visual representation of the relationships between pairs of indicators. Notable patterns include:
 •	Positive Linear Relationships: Confirmed between urban population, CO2 emissions, and electric power consumption, as well as cereal yield and CO2 emissions.
 •	Negative Linear Relationships: Evident between forest area and urban population, CO2 emissions, and electric power consumption.
 •	Distribution Insights: Histogram plots on the diagonal reveal the distribution of individual indicators, highlighting their variance and skewness.
 
 ![ Pairplot for highly correlated Indicators](images/pairplot.png)
-Figure # 2 : Pairplot for highly correlated Indicators
-###### Causality Analysis
+###### Figure # 2 : Pairplot for highly correlated Indicators
+##### Causality Analysis
 Granger causality tests were conducted to investigate potential causal relationships between selected pairs of indicators:
 •	Urban Population and CO2 Emissions: Urban population growth Granger-causes CO2 emissions, suggesting that urbanization is a significant driver of increased carbon emissions.
 •	CO2 Emissions and Electric Power Consumption: CO2 emissions Granger-cause electric power consumption, indicating feedback loops where higher emissions could lead to policy changes affecting power consumption patterns.
